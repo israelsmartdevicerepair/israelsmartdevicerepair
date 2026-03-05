@@ -1,0 +1,1386 @@
+<!DOCTYPE html>  <html lang="en">  
+<head>  
+  <meta charset="utf-8">  
+  <meta name="viewport" content="width=device-width,initial-scale=1">  
+  <title>SmartDeviceService</title>  
+  <link rel="preconnect" href="https://fonts.googleapis.com">  
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">  
+  <style>  
+    /* ================= ROOT VARIABLES ================= */
+:root {
+  --teal: #167f94;
+  --teal-dark: #0f6a7a;
+  --muted: #9ea9ad;
+  --bg: #f5f7f8;
+  --white: #ffffff;
+  --container: 1100px;
+}
+
+/* ================= GLOBAL STYLES ================= */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  margin: 0;
+  background: var(--bg);
+  color: #333;
+}
+
+/* ================= WRAPPER ================= */
+.wrap {
+  max-width: var(--container);
+  margin: 14px auto;
+  padding: 0 18px;
+}
+
+/* ================= TOPBAR ================= */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+}
+
+.top-left {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.logo-img {
+  height: 45px;
+  width: auto;
+  display: block;
+}
+
+.logo .text {
+  font-weight: 700;
+  color: var(--teal-dark);
+  font-size: 20px;
+}
+
+.search {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  padding: 0 25px;
+}
+
+.search form {
+  width: 70%;
+  max-width: 650px;
+  display: flex;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
+}
+
+.search input[type=text] {
+  flex: 1;
+  padding: 12px 14px;
+  border: 0;
+  outline: none;
+  background: #fff;
+}
+
+.search .select {
+  display: flex;
+  align-items: center;
+  padding: 6px 10px;
+  background: #f0f4f5;
+  border-left: 1px solid #e6ecee;
+}
+
+.search button {
+  background: var(--teal);
+  border: 0;
+  padding: 0 16px;
+  color: #fff;
+  display: flex;
+  align-items: center;
+}
+
+/* ================= TOP-RIGHT BUTTONS ================= */
+.top-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+}
+
+.top-btn {
+  background: #fff;
+  color: var(--teal-dark);
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: 0.3s;
+}
+
+.top-btn:hover {
+  background: var(--teal);
+  color: #fff;
+}
+
+.top-right .amount {
+  font-weight: 700;
+  color: #e76b2f;
+}
+
+.language-selector select {
+  padding: 6px 10px;
+  border-radius: 6px
+  border: 1px solid #ccc;
+  background: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;transitio: 0.3s;
+}
+
+.language-selector select:hover {
+  border-color: var(--teal);
+}
+
+
+/* ================= NAVIGATION ================= */
+.main-nav {
+  margin-top: 12px;
+}
+
+.nav-bar {
+  background: var(--teal);
+  border-radius: 4px;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+}
+
+.nav-left ul {
+  display: flex;
+  gap: 0;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-left li {
+  padding: 10px 18px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-right: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.nav-left li i {
+  width: 14px;
+  text-align: center;
+}
+
+.nav-right {
+  margin-left: auto;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.nav-right .group {
+  background: #fff;
+  padding: 6px 10px;
+  border-radius: 6px;
+  color: var(--teal-dark);
+  font-weight: 600;
+}
+
+/* ================= MODAL ================= */
+.modal-content ul {
+  margin-left: 20px;
+  line-height: 1.6;
+}
+
+.modal-content h2 {
+  margin-top: 0;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 10% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 500px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  animation: fadeIn 0.3s ease;
+}
+
+.close-button,
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close-button:hover,
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ================= CONTACT BUTTON ================= */
+.contact-button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin: 15px 0;
+}
+
+/* ================= FOOTER ================= */
+.nf-footer {
+  background: #0b4c75;
+  padding: 30px 0;
+  color: white;
+}
+
+.nf-footer-container {
+  width: 90%;
+  margin: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.footer-title {
+  font-size: 35px;
+  font-weight: bold;
+  margin: 0;
+  padding: 0;
+}
+
+.nf-footer-left {
+  width: 30%;
+  min-width: 250px;
+}
+
+.nf-footer-social img {
+  width: 40px;
+  margin: 7px;
+  background: white;
+  padding: 6px;
+  border-radius: 50%;
+  transition: 0.3s;
+}
+
+.nf-footer-social img:hover {
+  transform: scale(1.1);
+}
+
+.nf-footer-menus {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.menu-box {
+  background: #f3f5f7;
+  padding: 15px;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  min-width: 140px;
+}
+
+.menu-box a {
+  color: #000;
+  text-decoration: none;
+  margin: 4px 0;
+}
+
+.menu-box a:hover {
+  text-decoration: underline;
+}
+
+/* ================= RESPONSIVE ================= */
+@media(max-width:1000px) {
+  .search {
+    display: none;
+  }
+  .wrap {
+    padding: 0 12px;
+  }
+  .nav-left li {
+    padding: 8px 10px;
+    font-size: 14px;
+  }
+}
+  </style>  
+</head>  
+<body>  
+  <div class="wrap">  
+    <!-- ===== Topbar ===== -->  
+    <div class="topbar">  
+      <div class="top-left">  
+        <div class="logo">  
+          <img src="logo.png" alt="SmartDeviceRepair Logo" class="logo-img"> 
+          <div>  
+            <div class="text">SmartDevice</div>  
+            <div style="font-size:20px;color:var(--muted);margin-top:5px">Smart Solutions for Every Device</div>  
+          </div>  
+        </div>  
+      </div>  
+      <div class="search">  
+        <form action="#" onsubmit="return false">  
+          <input type="text" placeholder="Search for ...">  
+          <div class="select">Website <i class="fa fa-caret-down" style="margin-left:8px"></i></div>  
+          <button><i class="fa fa-search"></i></button>  
+        </form>   
+      </div>  
+      <div class="top-right">
+        <button class="top-btn"
+      onclick="openLogin()">
+         <i class="fa fa-user"></i> Login /
+      Register
+        </button>
+        <button class="top-btn">
+          <i class="fa fa-Shopping-cart"></i>
+      Your Cart: <span class="amount">0.00$</span>
+        </button>
+        <div class="language-selector">
+          <select
+      onchange="changeLanguage(this.value)">
+            <option value="en">English</option>
+            <option value="zh">Chinese</option>
+            <option value="pt">Portguese</option>
+            <option value="hi">Indian</option>
+        </select>
+        </div>  
+      </div>  
+    </div>  <!-- ===== Main Navigation ===== -->  
+<div class="main-nav">  
+  <nav class="nav-bar">  
+    <div class="nav-left">  
+      <ul>  
+        <li>
+          <a href="index.php" class="nav-btn">
+            <i class="fa fa-home"></i>
+            <span>Home</span>
+          </a>
+        <li>
+          <a href="index.php?a=recent-files"
+        class="nav-btn">
+            <i class="fa fa-clock-rotate-left"></i>
+            <span>Recent Files</span>
+           </a>
+        <li>
+          <a href="index.php?a=packages"
+        class="nav-btn">
+            <i class="fa fa-dollar-sign"></i>
+            <span>Packages & Pricing</span>
+           </a>
+        <li>
+          <a href="index.php?a=agents"
+        class="nav-btn">
+            <i class="fa fa-globe"></i></a>
+            <span>World Agents</span>
+        </a>
+        <li>
+        <li>
+          <a href="index.php?a=blog"
+        class="nav-btn">
+            <i class="fa fa-newspaper"></i>
+            <span>Blog</span>
+        </a>
+        <li>
+  <a href="index.php?a=pages&id=12" class="nav-btn">
+    <i class="fa fa-shield-halved"></i>
+    <span>Frp Bypass</span>
+  </a>
+</li> .
+        <li><i class="fa fa-envelope"></i> Contact</li>  
+      </ul>  
+    </div>  
+    <div class="nav-right">  
+      <div class="group">Home</div>  
+      <div class="group">Contact Us</div>
+    </div>  
+  </nav>  
+</div>  
+
+<!-- ===== Contact Button ===== -->  
+<button id="openContactModal" class="contact-button">Contact Us</button>  
+
+<!-- ===== Contact Modal ===== -->  
+<div id="contactModal" class="modal">  
+  <div class="modal-content">  
+    <span class="close-button">&times;</span>  
+    <h2>Get In Touch</h2>  
+    <p>We'd love to hear from you!</p>  
+    <p>📧 Email: <a href="mailto:nextgene00@gmail.com">nextgene00@gmail.com</a></p>  
+    <p>📱 Phone: <a href="tel:+256756720659">+256761123672</a></p>  
+    <div class="social-links">  
+      <a href="https://wa.me/+256761123672"  
+target="_blank">WhatsApp</a> |  
+      <a  
+href="https://www.tiktok.com/@mai106911"  
+target="_blank">Tiktok</a> |  
+      <a  
+href="https://www.youtube.com/@AndindaIsrael"  
+target="_blank">Youtube</a> |  
+      <a  
+href="https://instagram.com/Israel_Andinda"  
+target="_blank">Instagram</a>`/  
+    </div>  
+  </div>  
+</div>  
+
+<!-- ===== Breadcrumbs (Example Placeholder) ===== -->  
+<div class="breadcrumb">  
+  <a href="#">Home</a> / <a href="#">Page</a>  
+</div>  
+
+<!-- ===== Main Content (Example Placeholder) ===== -->  
+<div class="content">  
+  <h1>Welcome to SmartDeviceService</h1>  
+  <p>Smart solutions for every device.</p>  
+  <!-- You can add the rest of your sections here -->  
+</div>
+
+  </div>    <!-- ===== JavaScript ===== -->    <script>  
+    const modal = document.getElementById('contactModal');  
+    const btn = document.getElementById('openContactModal');  
+    const span = document.getElementsByClassName('close-button')[0];  
+  
+    btn.onclick = function() {  
+      modal.style.display = 'block';  
+    }  
+  
+    span.onclick = function() {  
+      modal.style.display = 'none';  
+    }  
+  
+    window.onclick = function(event) {  
+      if (event.target == modal) {  
+        modal.style.display = 'none';  
+      }  
+    }
+    function openlogin(){
+
+    document.getElementById("LoginModal").style.
+    display="block";
+    }
+    function closeLogin(){
+
+    document.getElementByid("LoginModal").style.
+    display="none";
+    }
+
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+      const modal =
+    document.getElementById("loginModal");
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    }
+
+    function changeLanguage(lang) {
+      alert("Language changed to: " + lang);
+    }
+  </script>  </body>  
+</html>  
+<!DOCTYPE html>    
+<html lang="en">    
+<head>    </style>    
+</head>    
+<body>  </body>    
+</html>    
+<html lang="en">    
+  <head>    
+    <meta charset="UTF-8">    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    
+    <title>SmartDeviceService</title>  <style>    
+  body {
+     background-color: #ffffff !important;
+  margin: 0;
+  padding: 0;
+}    
+    font-family: Arial, sans-serif;    
+    margin: 0;    
+    padding: 0;    
+    background-color: #f8f9fa;    
+    color: #333;    
+  }    header {
+background-color: #007bff;
+color: white;
+text-align: center;
+padding: 40px 10px;
+}
+
+header h1 {
+margin: 0;
+font-size: 2.5em;
+}
+
+header p {
+font-size: 18px;
+margin-top: 10px;
+}
+
+section {
+padding: 40px 20px;
+text-align: center;
+}
+
+.services {
+background-color: #e9efeb;
+}
+
+.service-item {
+background-color: rgb(255, 255, 255);
+padding: 20px;
+margin: 10px auto;
+max-width: 500px;
+border-radius: 10px;
+box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+footer {
+background-color: #343a40;
+color: white;
+text-align: center;
+padding: 20px;
+font-size: 14px;
+}
+
+a.button {
+display: inline-block;
+background-color: #007bff;
+color: white;
+padding: 10px 20px;
+text-decoration: none;
+border-radius: 5px;
+margin-top: 15px;
+}
+
+a.button:hover {
+background-color: #0056b3;
+}
+
+.folders-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 25px;
+  max-width: 900px;
+  margin: 40px auto;
+  text-align: center;
+}
+
+.folder {
+  text-decoration: none;
+  color:#000;
+  padding: 15px;
+  border-radius: 10px;
+  transition: transform 0.3s;
+}
+
+.folder img {
+  width: 85px;
+  height: auto;
+}
+
+.folder h4 {
+  font-size: 14px;
+  margin: 8px 0 3px;
+  font-weight: 600;
+}
+
+.folder p {
+  font-size: 12px;
+  color: #666;
+}
+
+.folder:hover {
+  transform: translateY(-5px);
+}
+
+.folder img {
+  width: 90px;
+  filter: hue-rotate(200deg) saturate(200%);
+}
+
+@media (max-width: 768px) {
+  .folders-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .folders-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+body {
+  background: white;
+}
+
+.folder {
+  text-align: center;
+  text-decoration: none;
+  color: #333;
+}
+
+.folder img {
+  width: 90px;
+  display: block;
+  margin: 0 auto 8px;
+}
+
+.folder:hover {
+  transform: translateY(-5px);
+}
+</style>
+
+  </head>    <body>  </style>   <div style="display:flex; justify-content:center; gap:15px; margin-top:20px;">    </button>  </div>    
+  <header>    
+ <div class="folders-container">
+
+  <a href="test-point.html" class="folder">
+    <img src="FOLDER.png.png" alt="folder">
+    <h4>TEST POINTS</h4>
+    <p>Photos</p>
+  </a>
+
+  <a href="modem-unlock.html" class="folder">
+    <img src="FOLDER.png.png" alt="folder">
+    <h4>MIFI UNLOCKING</h4>
+    <p>Modem,Mifi & Router</p>
+  </a>
+
+  <a href="isp-pinouts.html" class="folder">
+    <img src="FOLDER.png.png" alt="folder">
+    <h4>EMMC ISP PINOUTS</h4>
+    <p>Testpoints / ISP</p>
+  </a>
+
+  <a href="samsung-imei.html" class="folder">
+    <img src="FOLDER.png.png" alt="folder">
+    <h4>SAMSUNG REPAIR IMEI</h4>
+    <p>Solution | Fix NG</p>
+  </a>
+
+  <a href="mdm-remove.html" class="folder">
+    <img src="FOLDER.png.png" alt="folder">
+    <h4>ALL SAMSUNG MDM</h4>
+    <p>Remove / Unlock</p>
+  </a>
+
+  <a href="firmware.html" class="folder">
+    <img src="FOLDER.png.png" alt="folder">
+    <h4>FIRMWARE</h4>
+    <p>Flash files</p>
+  </a>
+
+  <a href="nvram.html" class="folder">
+    <img src="FOLDER.png.png" alt="folder">
+    <h4>NVRAM FILES</h4>
+    <p>Repair IMEI</p>
+  </a>
+
+  <a href="flash-tools.html" class="folder">
+    <img src="FOLDER.png.png" alt="folder">
+    <h4>FLASH TOOLS</h4>
+    <p>Mobile Repair</p>
+  </a>
+
+  <a href="computer-software.html" class="folder">
+    <img src="FOLDER.png.png" alt="folder">
+    <h4>COMPUTER SOFTWARE</h4>
+    <p>Tips & Tricks</p>
+  </a>
+
+  <a href="drivers.html" class="folder">
+    <img src="FOLDER.png.png" alt="folder">
+    <h4>DRIVERS</h4>
+    <p>USB / ADB</p>
+  </a>
+
+  <a href="root-files.html" class="folder">
+    <img src="FOLDER.png.png" alt="folder">
+    <h4>ROOT FILES</h4>
+    <p>Android Root</p>
+  </a>
+
+</div>   
+</section>    <footer><footer class="nf-footer">    
+<div class="nf-footer-container">    <!-- LEFT SIDE: BUSINESS NAME + TEXT -->    
+<div class="nf-footer-left">    
+    <h2 class="footer-title">SmartDeviceService</h2>    
+    <p>    
+        Source Of Mobile Phone Firmware, Stock Rom,    
+        IMEI Lock Remove, MDM Fix, Latest Patch, Dead Boot Repair,    
+        Chimera, MDM Unlock, Flash Files, Stock Roms, Frp Bypass,    
+        Z3x Pandora Files, Whatsapp<br>    
+        +256761123672    
+    </p>    
+</div>    
+
+<!-- CENTER SOCIAL ICONS -->    
+<div class="nf-footer-social">    
+    <a href="https://wa.me/256761123672" target="_blank">    
+        <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png">    
+    </a>    
+
+    <a href="https://www.youtube.com/@AndindaIsrael" target="_blank">    
+        <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png">    
+    </a>    
+
+    <a href="https://www.tiktok.com/@mai106911" target="_blank">    
+        <img src="https://cdn-icons-png.flaticon.com/512/3046/3046121.png">    
+    </a>    
+
+    <a href="https://instagram.com/Israel_Andinda" target="_blank">    
+        <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png">    
+    </a>    
+</div>    
+
+<!-- RIGHT SIDE MENUS -->    
+<div class="nf-footer-menus">    
+
+    <div class="menu-box">    
+        <a href="#">Home</a>    
+        <a href="#">Downloads</a>    
+        <a href="#">Blog</a>    
+        <a href="#">Announcements</a>    
+    </div>    
+
+    <div class="menu-box">    
+        <a href="#" onclick="openTerms(); return false;">Terms Of Service</a>    
+        <a href="#" onclick="openPrivacy(); return false;">Privacy Policy</a>    
+        <a href="#" onclick="openReturnPolicy(); return false;"footer-link">Return Policy</a>  
+        <a href="#" onclick="openCancellationPolicy(); return false;"footer-link">Cancellation Policy</a>  
+        <a href="#" onclick="openRefundPolicy(); return false;"footer-link">Refund Policy</a>    
+    </div>    
+
+    <div class="menu-box">    
+        <a href="#">Login</a>    
+        <a href="#">Register</a>    
+        <a href="#">About Us</a>    
+        <a href="#" onclick="openContact(); return false;">Contact Us</a>
+
+    </div>    
+
+</div>
+
+</div>  </footer>  <style>    
+    .nf-footer {    
+        background: #0b4c75;    
+        padding: 30px 0;    
+        color: white;    
+    }    .nf-footer-container {    
+    width: 90%;    
+    margin: auto;    
+    display: flex;    
+    justify-content: space-between;    
+    align-items: flex-start;    
+    gap: 20px;    
+    flex-wrap: wrap;    
+}    
+
+/* Title (BIG LIKE THE SCREENSHOT) */    
+.footer-title {    
+    font-size: 35px;    
+    font-weight: bold;    
+    margin: 0;    
+    padding: 0;    
+}    
+
+.nf-footer-left {    
+    width: 30%;    
+    min-width: 250px;    
+}    
+
+/* Social Icons */    
+.nf-footer-social img {    
+    width: 40px;    
+    margin: 7px;    
+    background: white;    
+    padding: 6px;    
+    border-radius: 50%;    
+    transition: 0.3s;    
+}    
+
+.nf-footer-social img:hover {    
+    transform: scale(1.1);    
+}    
+
+/* Right side links */    
+.nf-footer-menus {    
+    display: flex;    
+    gap: 20px;    
+    flex-wrap: wrap;    
+}    
+
+.menu-box {    
+    background: #f3f5f7;    
+    padding: 15px;    
+    border-radius: 6px;    
+    display: flex;    
+    flex-direction: column;    
+    min-width: 140px;    
+}    
+
+.menu-box a {    
+    color: #000;    
+    text-decoration: none;    
+    margin: 4px 0;    
+}    
+
+.menu-box a:hover {    
+    text-decoration: underline;    
+}
+
+.policy-list {
+  margin: 15px 0 20px 20px; /* space around list */
+  padding-left: 20px;
+}
+
+.policy-list {
+  list-style-position: outside;   /* keeps bullets aligned */
+  padding-left: 25px;             /* space from left */
+  margin: 15px 0;
+}
+
+.policy-list li {
+  margin-bottom: 10px;
+  line-height: 1.6;
+  text-align: left;               /* forces straight alignment */
+}
+
+.policy-note {
+  margin-top: 15px;     /* space from previous paragraph */
+  line-height: 1.6;
+  font-size: 14px;
+  color: #555;
+}
+
+.policy-note a {
+  color: var(--teal);
+  text-decoration: underline;
+}
+</style>  </footer>
+
+<!-- ================= FOOTER END ================= -->    </footer>    
+      <p>© 2025 SmartDeviceService | Smart solutions for every device</p>    
+    </footer>
+    
+    <!-- 💥 PASTE LOGIN/REGISTER MODAL HERE 💥 -->
+
+<div class="modal" id="loginModal">
+    <div class="modal-content">
+        <span class="close" onclick="closeLogin()">&times;</span>
+        <h2>Login</h2>
+
+        <input type="text" placeholder="Username" class="input-box">
+        <input type="password" placeholder="Password" class="input-box">
+
+        <div class="remember-line">
+            <input type="checkbox"> Remember me
+        </div>
+
+        <div class="recaptcha-box">reCAPTCHA placeholder</div>
+
+        <button class="login-btn">Secure Login</button>
+
+        <p class="signup-text">
+            Don’t have an account? <a href="#">Sign up today</a>
+        </p>
+
+        <div class="benefits">
+            <p>• Speed your way through checkout</p>
+            <p>• Track your orders easily</p>
+            <p>• Keep a record of all your purchases</p>
+        </div>
+    </div>
+</div>
+
+</div> <!-- closes modal-content -->
+</div> <!-- closes modal -->
+
+<script>
+function openLogin(){
+    document.getElementById("loginModal").style.display="block";
+}
+function closeLogin(){
+    document.getElementById("loginModal").style.display="none";
+}
+</script>
+<div id="contactModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeContact()">&times;</span>
+
+    <h2>Contact Us</h2>
+
+    <p>If you have any questions or need support, feel free to contact us.</p>
+
+    <ul>
+      <li><strong>Email:</strong> support@smartdeviceservice.com</li>
+      <li><strong>Phone:</strong> +256 761 123 672,+256756720659</li>
+      <li><strong>Location:</strong> Rukungiri, Uganda</li>
+    </ul>
+
+    <p>We usually respond within 24 hours.</p>
+
+<div id="cancellationPolicyModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeCancellationPolicy()">&times;</span>
+
+    <h2>Cancellation Policy</h2>
+    <p><strong>Last updated:</strong> 28 January 2026</p>
+
+    <p>
+      This Cancellation Policy explains how cancellations are handled at
+      <strong>SmartDeviceService</strong>.
+    </p>
+
+    <h3>Digital Products & Services</h3>
+    <ul>
+      <li>All digital downloads cannot be cancelled once processing has begun.</li>
+      <li>Once access to files or services is provided, cancellation is not allowed.</li>
+      <li>Users are advised to read product descriptions carefully before purchase.</li>
+    </ul>
+
+    <h3>Subscription & Premium Services</h3>
+    <ul>
+      <li>Subscriptions may be cancelled before the next billing cycle.</li>
+      <li>No refunds will be issued for the current billing period.</li>
+      <li>Cancellation requests must be made through official contact channels.</li>
+    </ul>
+
+    <p>
+      By using our website and services, you agree to this Cancellation Policy.
+    </p>
+
+<div id="returnPolicyModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeReturnPolicy()">&times;</span>
+
+    <h2>Return Policy</h2>
+    <p><strong>Last updated:</strong> 28 January 2026</p>
+
+    <p>
+      At <strong>SmartDeviceService</strong>, we strive to ensure customer satisfaction.
+      Please read our return policy carefully before making any purchase or download.
+    </p>
+
+    <h3>Digital Products</h3>
+    <ul>
+      <li>All downloadable files are <strong>non-refundable</strong>.</li>
+      <li>Once a file is downloaded, it cannot be returned or exchanged.</li>
+      <li>We are not responsible for incorrect usage of firmware or software.</li>
+    </ul>
+
+    <h3>Eligibility for Support</h3>
+    <ul>
+      <li>If a file is corrupted, contact us within 24 hours.</li>
+      <li>Proof of download or payment may be required.</li>
+      <li>Support is provided at our discretion.</li>
+    </ul>
+
+    <p>
+      By downloading any content from our website, you agree to this Return Policy.
+    </p>
+
+</div>
+<div id="privacyModal" class="modal">
+  <div class="modal-content privacy-content">
+    <span class="close" onclick="closePrivacy()">&times;</span>
+
+    <h2>Privacy Policy</h2>
+
+    <p>
+      SmartDeviceService, accessible from SmartDeviceService.com & SmartDeviceService.info, one of
+      our main priorities is the privacy of our visitors. This Privacy Policy
+      document contains types of information that is collected and recorded by
+      SmartDeviceService and how we use it.If you have additional questions or require more information
+      about our Privacy Policy,do not hesitate to contact us.
+      This Privacy Policy applies only to our online activities and is valid for visitors to our website with regards to the information that they shared and/or collect in SmartDeviceService.This policy is anot applicable to any information collected offline or via channels other than this website.Our Privacy Policy was created for and by SmartDeviceService.
+    </p>
+
+    <h2>Costent</h2>
+
+    <p>
+      By using our website, you hereby consent to our Privacy Policy and agree to
+      its terms.
+    </p>
+
+    <h3>Information We Collect</h3>
+    <p>
+      The personal information that you are asked to provide, and the reasons why
+      you are asked to provide it, will be made clear to you at the point we ask
+      you to provide your personal information.If you contact us directly, we may receive additional information about you such as your name ,email address,phone number,the contents of the message and/or attachments you may send us,and any other information you may choose to provide.
+      When you register for an account information,including items such as name,company name,address,and telphone number.
+    </p>
+
+    <h4>How we use your information</h4>
+
+    <p>
+      We use the information we collect in various ways,including to:</p>
+
+      <ul class="policy-list">
+        <li>Provide,operate,and maintain our website</li>
+        <li>Improve,personalize,and expand our website</li>
+        <li>Understand and analyze how u use our website</li>
+        <li>Develop new products,services,features and functionality</li>
+        <li>Communicate with you for customer service and updates</li>
+        <li>Send you emails</li>
+        <li>Find and prevent fraud</li>
+      </ul>
+
+    <h5>Log Filies</h5>
+
+    <p>
+      SmartDeviceService follows a standard procedure of using log files .These files log visitors when they visit the websites.All hostind companies do this as a part of hosting services' analytics.The information collected by log files include internet protocol(IP) addressess,browser type,Internet Service Provider(ISP),date and time stamp,referring/exit pages and possibly the number of clicks .These are not linked to any information that is personally identifiable.The purpose of the information is for analyzing trends,administering the site,tracking users' movement on the website , and gathering demographic information.</p>
+
+    <h6>Cookies and Web Beacons</h6
+      
+    <p>
+      Like any other website,SmartDeviceService uses 'cookies'.These cookies are used to store information including visitors' preferences,and the visitor accessed or visited.The information is used to optimize the users' experience by customizing our web page content based on vistors' browser type and/or other information.</p>
+    <p class="policy-note">
+      For more general information on cookies, please read 
+      <a
+    href="https://en.wikipedia.org/wiki.HTTP_cookie" target=_blank">
+       "What are cookies"
+       </a>.
+    </p>
+
+    <h7>Google Double Click DART Cookie</h7>
+
+    <p>
+      Google is one of a third party vendor on our site .It also uses cookies,to serve ads to our site vistors based upon their visit to SmartDeviceService.com and other sites on the internet.However,visitors may choose to decline yhe use of DART cookies by visiting the google ad and content network Privacy Policy at the foolowing URL-https://policies.google.com/technologies/ads
+    </p>
+
+    <h8>Our Advertising Partners</h8>
+
+    <p>
+      Some of Advertisers on our site may use cookies and web beacons.Our advertising partners are listed below.Each of our advertising partners has their own Privacy Policy for their policies on user data.For easier access, we hyperlinked to their Privacy Policies below.
+      .Googlehttps://policies.google.com/technologies/ads
+    </p>
+
+    <h8>Advertising Partners Privacy Policies</h8>
+
+    <p>
+      You may consult this list to find the Privacy Policy for each of the advertising partners of SmartDeviceService.Third-party ad servers or ad networks uses technologies like cookies,javascript or Web Beacons that are used in their respective advertisements and links that appear on SmartDeviceService,which are sent directly to user' browser.They automatically receive your IP address when this occurs.These technologies are used to measure the effectiveness of their advertising campaigns and/or to personalize the advertising content that you see on websites that you visit.
+      Note that SmartDeviceService has no access to or control over these cookies that are used by third-party advertisers. 
+    </p>
+
+    <h9>Third-Party Privacy Policies</h9>
+
+    <p>
+      SmartDeviceService's Privacy Policy does not apply to other advertisers or websites.Thus, we are advising you to consult the respective Privacy Policies of these third-party ad servers for more detailed information .It may include their practices and instructions about how to opt-out of certain options.To know more detailed information about cookie management with specific web browsers, it can be found at the browsers' respective websites. 
+    </p>
+
+    <h9>CCPA Privacy Rights (Do Not Sell My Personal Information)</h9>
+
+    <p>
+      Under the CCPA,among other rights, California consumers have the right to:
+      Request that a business that collects a consumer's personal data disclose the categories and specific pieces of personal data that a business has collected about consumers. Request that a business delete any personal data about the consumer that a business has collected. Request that a business that sells a consumer's personal data,not sell the consumer's personal data.If you make a request,we have one month to respond to you.If you would like to respond to you.If you would like to exercise any of these rights,please contact us. 
+    </p>
+
+    <h4>GDPR Data Protection Rights</h4>
+
+    <p>
+      We would like to make sure you are fully aware of all of your data protection rights.Every user is entitled to the following:
+    </p>
+    <p>
+      The right to access - You have the right to request copies of your personal data.We may charge you a small fee for this service.
+    </p>
+    <p>
+      The right to rectification- You have the right to request that we correct any information you believe is inaccurate.You also have the right to request that we complete the information you believe is incomplete.
+    </p>
+    <p>
+      The right to erasure- You have the right to request that we erase your personal data, under certain conditions. 
+    </p>
+    <p>
+      The right to restrict processing- You have the right to request that we restrict the processing of your personal data,under certain conditions. 
+    </p>
+    <p>
+      The right to object to processing- You have the right to object to our processing of your personal data,under certain conditions. 
+    </p>
+    <p>
+      The right to data portabilty- You have the right to request that we transfer the data that we have collected to another organization,or directly to you,under certain conditions.
+    </p>
+    <p>
+      If you make a request,We have one month to respond to you.If you would like to exercise any of these rights,please contact us.
+    </p>
+
+    <h>Downloadable Content</h>
+
+    <p>
+      Our downloadable content is for educational purposes and does not encourage our website visitors to intentionally hurt/cause harm to anyone or anything,this strictly includes; a Human being,an animal,a Coultry/Community,an organisation/Company,computer,Mobile Phone.
+    </p> 
+    <p>
+      Any offense/harm/damage caused to anyone or something especially mentioned here <u>SMARTDEVICETEAM</u> will takes no responsibility .
+    </p>
+    <p>
+      Important:Misuse of our Downloadable Files/Content can result in Mobile Phone Total Brick(death) & Penalty.Consider Careful Reading & Understanding How,When and What to use before Downloading.
+    </p>
+    
+    <h>Children's Information</h>
+
+    <p>
+      Another part of our priority is adding protection for children while using the internet.We encourage parents and guardians to observe,participate in ,and/or monitor and guide their online activity.
+    </p>
+    <p>
+      SmartDeviceService does not knowingly collect any Personal identifiable Information from children under the age of 13.If you think that your child provided this information on our website,we strongly encourage you to contact us immediately and we will do our best efforts to promptly remove such information from our records.
+    </p>
+
+    <h>SERVICE AREA</h>
+
+    <p>
+      Kampala,Mbarara,Rukungiri,Kihihi <u>Learn More</u>,Located at the Roundabout,Republic Road Rukungiri Uganda <u>Direction</u>
+    </p>
+
+    <h>OTHER LACATIONS:</h><u>Kampala-Uganda,Mbarara-Uganda,Rukungiri-Uganda,Kihihi-Uganda.</u></h>
+
+    <h>Quick Links</h>
+
+    <h>Contact |</h> <u>About us</u>|<u>Subscribe</u>***
+
+    <h>Premium Services</h>
+
+      
+    </p>
+<div id="termsModal" class="modal">
+  <div class="modal-content terms-content">
+    <span class="close" onclick="closeTerms()">&times;</span>
+
+    <h2>Terms of Service</h2>
+    <p><strong>Last Update:</strong> 24 January 2026</p>
+
+    <h3>Introduction</h3>
+    <p>
+      Welcome to <strong>SmartDeviceService.com</strong>. These are the terms and
+      conditions governing your access to and use of the website
+      SmartDeviceService.com and its related sub-domains, services, and tools
+      (the “Site”).
+    </p>
+
+    <p>
+      By accessing, browsing, downloading, or using the Site, you agree
+      to comply with these Terms of Service (“User Agreement”). If you do
+      not agree, please do not use this website.
+    </p>
+
+    <p>
+      This User Agreement is effective upon acceptance and incorporates
+      our Privacy Policy by reference.
+    </p>
+
+    <h3>Your Account and Registration Obligations</h3>
+    <p>
+      When registering as a member, you may be required to provide
+      accurate registration data including a username and password.
+    </p>
+
+    <ul>
+      <li>
+        You must maintain accurate, current, and complete registration
+        information. Providing false or misleading information may
+        result in suspension or termination of your account.
+      </li>
+      <li>
+        We reserve the right to verify your identity or business details
+        and request supporting documentation at any time.
+      </li>
+      <li>
+        Failure to provide requested verification may result in account
+        limitation, suspension, or withdrawal.
+      </li>
+      <li>
+        Unverified or inactive accounts may be cancelled without notice.
+      </li>
+    </ul>
+
+    <h3>Consent</h3>
+    <p>
+      Reading, browsing, or downloading any file from
+      <strong>SmartDeviceService.com</strong> confirms that you agree to and
+      adhere to these Terms of Service.
+    </p>
+
+    <hr>
+
+    <h3>Quick Links</h3>
+    <p>
+      <a href="#" target="_blank">Contact</a> |
+      <a href="https://SmartDeviceService.com/index.php?a=pages&b=about-us" target="_blank">About Us</a> |
+      <a href="https://www.youtube.com/channel/UCuEkFouD_VC96FfmVQZwhPQ" target="_blank">Subscribe</a>
+    </p>
+
+    <p>
+      <a href="https://SmartDeviceService.com/index.php?a=pages&id=11" target="_blank">
+        Premium Services
+      </a>
+    </p>
+
+<div id="refundPolicyModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeRefundPolicy()">&times;</span>
+
+    <h2>Refund Policy</h2>
+
+    <p>
+      Thank you for choosing SmartDeviceService. Please read our refund policy
+      carefully before making any purchase.
+    </p>
+
+    <ul>
+      <li>All digital products and downloadable files are non-refundable.</li>
+      <li>Once a file has been downloaded, no refund will be issued.</li>
+      <li>Service fees are non-refundable once the service has started.</li>
+      <li>Refunds will not be provided for incorrect usage of files.</li>
+      <li>Ensure compatibility of your device before purchasing.</li>
+    </ul>
+
+    <p>
+      If you believe you were charged incorrectly, contact our support team
+      within 24 hours of payment.
+    </p>
+
+</div>
+<script>
+function openContact() {
+  document.getElementById("contactModal").style.display = "block";
+}
+
+function closeContact() {
+  document.getElementById("contactModal").style.display = "none";
+}
+</script>
+  // Function to open Privacy Policy modal
+  function openPrivacy() {
+    document.getElementById("privacyModal").style.display = "block";
+  }
+
+  // Function to close Privacy Policy modal
+  function closePrivacy() {
+    document.getElementById("privacyModal").style.display = "none";
+  }
+
+  // Close the modal if the user clicks outside of it
+  window.addEventListener("click", function(event) {
+    const modal = document.getElementById("privacyModal");
+    if (event.target === modal) {
+      modal.style.display = "none";
+    }
+  });
+
+function openTerms() {
+  document.getElementById("termsModal").style.display = "block";
+}
+
+function closeTerms() {
+  document.getElementById("termsModal").style.display = "none";
+}
+
+// Close when clicking outside the modal
+window.addEventListener("click", function (e) {
+  const modal = document.getElementById("termsModal");
+  if (e.target === modal) {
+    modal.style.display = "none";
+  }
+});
+
+function openReturnPolicy() {
+  document.getElementById("returnPolicyModal").style.display = "block";
+}
+
+function closeReturnPolicy() {
+  document.getElementById("returnPolicyModal").style.display = "none";
+}
+
+// Close when clicking outside the modal
+window.addEventListener("click", function (e) {
+  const modal = document.getElementById("returnPolicyModal");
+  if (e.target === modal) {
+    modal.style.display = "none";
+  }
+});
+
+function openCancellationPolicy() {
+  document.getElementById("cancellationPolicyModal").style.display = "block";
+}
+
+function closeCancellationPolicy() {
+  document.getElementById("cancellationPolicyModal").style.display = "none";
+}
+
+// Close modal when clicking outside
+window.addEventListener("click", function (e) {
+  const modal = document.getElementById("cancellationPolicyModal");
+  if (e.target === modal) {
+    modal.style.display = "none";
+  }
+});
+
+function openRefundPolicy() {
+  document.getElementById("refundPolicyModal").style.display = "block";
+}
+
+function closeRefundPolicy() {
+  document.getElementById("refundPolicyModal").style.display = "none";
+}
+
+</script>
+</body>
+</html>
